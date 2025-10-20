@@ -1,0 +1,122 @@
+# Source: ingress-nginx/templates/controller-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    helm.sh/chart: ingress-nginx-4.13.3
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/instance: nginx-ingress
+    app.kubernetes.io/version: "1.13.3"
+    app.kubernetes.io/part-of: ingress-nginx
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: controller
+    gitops.jenkins-x.io/pipeline: 'namespaces'
+  name: ingress-nginx-controller
+  namespace: nginx
+  annotations:
+    meta.helm.sh/release-name: 'nginx-ingress'
+    meta.helm.sh/release-namespace: 'nginx'
+    kapp.k14s.io/change-group: 'apps.jenkins-x.io/ingress-nginx'
+    wave.pusher.com/update-on-config-change: 'true'
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: ingress-nginx
+      app.kubernetes.io/instance: nginx-ingress
+      app.kubernetes.io/component: controller
+  replicas: 3
+  revisionHistoryLimit: 10
+  minReadySeconds: 0
+  template:
+    metadata:
+      labels:
+        helm.sh/chart: ingress-nginx-4.13.3
+        app.kubernetes.io/name: ingress-nginx
+        app.kubernetes.io/instance: nginx-ingress
+        app.kubernetes.io/version: "1.13.3"
+        app.kubernetes.io/part-of: ingress-nginx
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/component: controller
+    spec:
+      dnsPolicy: ClusterFirst
+      containers:
+      - name: controller
+        image: registry.k8s.io/ingress-nginx/controller:v1.13.3@sha256:1b044f6dcac3afbb59e05d98463f1dec6f3d3fb99940bc12ca5d80270358e3bd
+        imagePullPolicy: IfNotPresent
+        lifecycle:
+          preStop:
+            exec:
+              command:
+              - /wait-shutdown
+        args:
+        - /nginx-ingress-controller
+        - --publish-service=$(POD_NAMESPACE)/ingress-nginx-controller
+        - --election-id=ingress-nginx-leader
+        - --controller-class=k8s.io/ingress-nginx
+        - --ingress-class=nginx
+        - --configmap=$(POD_NAMESPACE)/ingress-nginx-controller
+        - --enable-metrics=true
+        - --publish-service=nginx/ingress-nginx-controller
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 101
+          runAsGroup: 82
+          allowPrivilegeEscalation: false
+          seccompProfile:
+            type: RuntimeDefault
+          capabilities:
+            drop:
+            - ALL
+            add:
+            - NET_BIND_SERVICE
+          readOnlyRootFilesystem: false
+        env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: LD_PRELOAD
+          value: /usr/local/lib/libmimalloc.so
+        livenessProbe:
+          failureThreshold: 5
+          httpGet:
+            path: /healthz
+            port: 10254
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /healthz
+            port: 10254
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        ports:
+        - name: http
+          containerPort: 80
+          protocol: TCP
+        - name: https
+          containerPort: 443
+          protocol: TCP
+        - name: metrics
+          containerPort: 10254
+          protocol: TCP
+        resources:
+          requests:
+            cpu: 100m
+            memory: 90Mi
+      nodeSelector:
+        kubernetes.io/os: linux
+      serviceAccountName: ingress-nginx
+      automountServiceAccountToken: true
+      terminationGracePeriodSeconds: 300
