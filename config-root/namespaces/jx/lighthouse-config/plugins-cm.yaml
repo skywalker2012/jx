@@ -6,6 +6,10 @@ data:
       repos:
       - skywalker2012/jx
       require_self_approval: true
+    - lgtm_acts_as_approve: true
+      repos:
+      - skywalker2012/jenkins-x
+      require_self_approval: true
     cat: {}
     cherry_pick_unapproved: {}
     config_updater:
@@ -16,6 +20,11 @@ data:
         env/prow/plugins.yaml:
           name: plugins
     external_plugins:
+      skywalker2012/jenkins-x:
+      - endpoint: http://cd-indicators.jx.svc.cluster.local/lighthouse/events
+        name: cd-indicators
+      - endpoint: http://lighthouse-webui-plugin.jx.svc.cluster.local/lighthouse/events
+        name: lighthouse-webui-plugin
       skywalker2012/jx:
       - endpoint: http://cd-indicators.jx.svc.cluster.local/lighthouse/events
         name: cd-indicators
@@ -25,6 +34,20 @@ data:
       additional_labels: null
     owners: {}
     plugins:
+      skywalker2012/jenkins-x:
+      - approve
+      - assign
+      - help
+      - hold
+      - lgtm
+      - lifecycle
+      - override
+      - size
+      - trigger
+      - wip
+      - cat
+      - dog
+      - pony
       skywalker2012/jx:
       - config-updater
       - approve
@@ -52,6 +75,11 @@ data:
     - repos:
       - skywalker2012/jx
       trusted_org: skywalker2012
+    - repos:
+      - skywalker2012/jenkins-x
+      trusted_org: skywalker2012
+    welcome:
+    - message_template: Welcome
 kind: ConfigMap
 metadata:
   creationTimestamp: null

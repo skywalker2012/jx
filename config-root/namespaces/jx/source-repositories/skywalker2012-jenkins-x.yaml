@@ -1,0 +1,22 @@
+apiVersion: jenkins.io/v1
+kind: SourceRepository
+metadata:
+  creationTimestamp: null
+  labels:
+    owner: skywalker2012
+    provider: github
+    repository: jenkins-x
+    gitops.jenkins-x.io/pipeline: 'namespaces'
+  name: skywalker2012-jenkins-x
+  namespace: jx
+spec:
+  httpCloneURL: https://github.com/skywalker2012/jenkins-x.git
+  org: skywalker2012
+  provider: https://github.com
+  providerKind: github
+  providerName: github
+  repo: jenkins-x
+  scheduler:
+    kind: ""
+    name: in-repo
+  url: https://github.com/skywalker2012/jenkins-x
