@@ -1,0 +1,22 @@
+apiVersion: jenkins.io/v1
+kind: SourceRepository
+metadata:
+  creationTimestamp: null
+  labels:
+    owner: skywalker2012
+    provider: github
+    repository: test-jx
+    gitops.jenkins-x.io/pipeline: 'namespaces'
+  name: skywalker2012-test-jx
+  namespace: jx
+spec:
+  httpCloneURL: https://github.com/skywalker2012/test_jx.git
+  org: skywalker2012
+  provider: https://github.com
+  providerKind: github
+  providerName: github
+  repo: test_jx
+  scheduler:
+    kind: ""
+    name: in-repo
+  url: https://github.com/skywalker2012/test_jx

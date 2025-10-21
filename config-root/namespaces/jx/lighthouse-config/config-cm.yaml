@@ -9,6 +9,7 @@ data:
       enabled:
         skywalker2012/jenkins-x: true
         skywalker2012/jx: true
+        skywalker2012/test_jx: true
     plank: {}
     pod_namespace: jx
     prowjob_namespace: jx
@@ -22,6 +23,7 @@ data:
       merge_method:
         skywalker2012/jenkins-x: merge
         skywalker2012/jx: merge
+        skywalker2012/test_jx: merge
       queries:
       - labels:
         - approved
@@ -34,6 +36,7 @@ data:
         repos:
         - skywalker2012/jx
         - skywalker2012/jenkins-x
+        - skywalker2012/test_jx
       - labels:
         - updatebot
         missingLabels:
@@ -45,6 +48,7 @@ data:
         repos:
         - skywalker2012/jx
         - skywalker2012/jenkins-x
+        - skywalker2012/test_jx
       target_url: http://lighthouse-jx.jx.y.picoheart.net/merge/status
 kind: ConfigMap
 metadata:
