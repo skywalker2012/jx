@@ -12,7 +12,7 @@ spec:
     gitName: github
     gitServer: https://github.com
     provider: kubernetes
-    registry: ghcr.io
+    registry: ph-sw-cn-beijing.cr.volces.com
   environments:
   - key: dev
     owner: skywalker2012
